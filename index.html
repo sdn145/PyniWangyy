@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PyniWangyy - Portfolio & 15 Creator Tools</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: #02000e;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    #stars-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.22), transparent 45%),
+        radial-gradient(circle at 20% 80%, rgba(56, 189, 248, 0.2), transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.12), transparent 60%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* PRELOADER SCREEN */
+    #preloader-container {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at center, #0a041f 0%, #02000e 100%);
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .loader-core {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 25px;
+    }
+
+    .loader-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #a855f7;
+      border-right-color: #38bdf8;
+      animation: spinRing 1.3s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+      box-shadow: 0 0 25px rgba(168, 85, 247, 0.5);
+    }
+
+    .loader-icon {
+      font-size: 1.8rem;
+      color: #fff;
+      filter: drop-shadow(0 0 15px #a855f7);
+    }
+
+    .welcome-text {
+      font-size: clamp(1.8rem, 5.5vw, 2.8rem);
+      font-weight: 900;
+      text-align: center;
+      background: linear-gradient(90deg, #ffffff 0%, #c084fc 35%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 22px;
+    }
+
+    .loader-track {
+      width: 260px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .loader-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #38bdf8, #a855f7, #ec4899);
+      box-shadow: 0 0 16px #a855f7;
+      transition: width 0.1s linear;
+    }
+
+    .counter-text {
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #94a3b8;
+      margin-top: 14px;
+    }
+
+    /* PAGE WRAPPER & ENTRANCE */
+    .page-wrapper {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease-out;
+    }
+
+    body.site-ready .page-wrapper {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .slide-enter-down {
+      transform: translateY(-40px);
+      opacity: 0;
+      transition: transform 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.5s ease;
+    }
+
+    .slide-enter-left {
+      transform: translateX(-50px);
+      opacity: 0;
+      transition: transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.5s ease;
+    }
+
+    .slide-enter-right {
+      transform: translateX(50px);
+      opacity: 0;
+      transition: transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.5s ease;
+    }
+
+    body.site-ready .slide-enter-down,
+    body.site-ready .slide-enter-left,
+    body.site-ready .slide-enter-right {
+      transform: translate(0, 0);
+      opacity: 1;
+    }
+
+    /* NAVBAR */
+    .navbar-container {
+      position: sticky;
+      top: 20px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      z-index: 100;
+      padding: 6px 0;
+    }
+
+    .capsule-nav {
+      background: rgba(14, 8, 33, 0.75);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 50px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+    }
+
+    .nav-link {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.4), rgba(56, 189, 248, 0.3));
+    }
+
+    /* HERO SPLIT */
+    .hero-split {
+      max-width: 1140px;
+      margin: 35px auto 55px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #c084fc;
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      padding: 6px 16px;
+      border-radius: 30px;
+      margin-bottom: 18px;
+    }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 5.5vw, 4rem);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      margin-bottom: 16px;
+      background: linear-gradient(90deg, #ffffff 0%, #cbd5e1 30%, #c084fc 70%, #38bdf8 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: textShimmer 5s linear infinite;
+    }
+
+    .hero-typewriter {
+      font-size: clamp(1.15rem, 3.2vw, 1.65rem);
+      font-weight: 800;
+      color: #cbd5e1;
+      margin-bottom: 18px;
+    }
+
+    .typed-word {
+      color: #38bdf8;
+      text-shadow: 0 0 25px rgba(56, 189, 248, 0.85);
+      border-right: 3px solid #c084fc;
+      padding-right: 6px;
+      animation: blinkCursor 0.7s step-end infinite;
+    }
+
+    .hero-desc {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: #94a3b8;
+      max-width: 520px;
+      margin-bottom: 26px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-glow-primary {
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      color: #030014;
+      font-weight: 800;
+      font-size: 0.92rem;
+      padding: 12px 24px;
+      border-radius: 14px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.25s ease;
+    }
+
+    .btn-glow-primary:hover {
+      transform: translateY(-3px);
+    }
+
+    .btn-glow-outline {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.92rem;
+      padding: 12px 22px;
+      border-radius: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+    }
+
+    .btn-glow-outline:hover {
+      background: rgba(168, 85, 247, 0.3);
+      border-color: #c084fc;
+      transform: translateY(-3px);
+    }
+
+    /* SPOTIFY CARD */
+    .spotify-luxury-card {
+      background: rgba(15, 9, 36, 0.7);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 26px;
+      padding: 26px;
+    }
+
+    .spotify-head h4 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .spotify-head p {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-bottom: 16px;
+    }
+
+    .track-active {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 14px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+    }
+
+    .track-cover {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #a855f7, #38bdf8);
+      display: grid;
+      place-items: center;
+      font-size: 1.3rem;
+    }
+
+    .track-info {
+      flex: 1;
+    }
+
+    .track-title {
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .track-artist {
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+
+    .track-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .track-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.84rem;
+      color: #cbd5e1;
+      padding: 6px 4px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* GENERIC SECTION STYLES */
+    .main-wrapper {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 45px;
+    }
+
+    .section-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #c084fc;
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 2.8rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffffff 30%, #c084fc 75%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .luxury-card {
+      background: rgba(15, 9, 36, 0.7);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 26px;
+      padding: 30px;
+    }
+
+    /* ABOUT ME GRID */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 26px;
+      margin-bottom: 40px;
+    }
+
+    .profile-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .avatar-wrapper {
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      padding: 5px;
+      background: linear-gradient(135deg, #38bdf8, #a855f7, #ec4899);
+      box-shadow: 0 0 35px rgba(168, 85, 247, 0.5);
+      margin-bottom: 18px;
+    }
+
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .profile-name {
+      font-size: 1.65rem;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .role-badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .role-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 4px 12px;
+      border-radius: 12px;
+    }
+
+    .bio-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .bio-desc {
+      font-size: 1.02rem;
+      line-height: 1.8;
+      color: #cbd5e1;
+      margin-bottom: 24px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 14px 10px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: #38bdf8;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .social-btn {
+      flex: 1;
+      min-width: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .social-btn:hover {
+      background: rgba(168, 85, 247, 0.3);
+      border-color: #c084fc;
+    }
+
+    /* TIMELINE */
+    .timeline-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 26px;
+      margin-bottom: 60px;
+    }
+
+    .timeline-col-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 24px;
+      border-left: 2px solid rgba(168, 85, 247, 0.4);
+      margin-bottom: 22px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -5.5px;
+      top: 6px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #c084fc;
+      box-shadow: 0 0 12px #c084fc;
+    }
+
+    .timeline-date {
+      font-size: 0.72rem;
+      color: #a855f7;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .timeline-role {
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 2px 0 4px;
+    }
+
+    .timeline-desc {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    /* ===================================================
+       15 CREATIVE TOOLS GRID (INTERACTIVE & FULL WORKING)
+       =================================================== */
+    .tools-section {
+      margin-top: 50px;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 22px;
+    }
+
+    .tool-box {
+      background: rgba(18, 11, 42, 0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 22px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .tool-box:hover {
+      transform: translateY(-3px);
+      border-color: rgba(168, 85, 247, 0.4);
+    }
+
+    .tool-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .tool-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      display: grid;
+      place-items: center;
+      color: #38bdf8;
+      font-size: 1.1rem;
+    }
+
+    .tool-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+
+    .tool-desc {
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+
+    .tool-body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .tool-input, .tool-select, .tool-textarea {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      color: #fff;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .tool-textarea {
+      resize: vertical;
+      min-height: 60px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .tool-input:focus, .tool-select:focus, .tool-textarea:focus {
+      border-color: #a855f7;
+    }
+
+    .tool-btn {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(56, 189, 248, 0.25));
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .tool-btn:hover {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.5), rgba(56, 189, 248, 0.4));
+    }
+
+    .tool-result {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: #38bdf8;
+      word-break: break-all;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .btn-copy-mini {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding: 4px;
+    }
+
+    .btn-copy-mini:hover {
+      color: #fff;
+    }
+
+    /* TOAST */
+    #toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: rgba(18, 10, 42, 0.95);
+      border: 1px solid #c084fc;
+      box-shadow: 0 10px 40px rgba(168, 85, 247, 0.6);
+      backdrop-filter: blur(20px);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 35px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 100000;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @keyframes spinRing {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes textShimmer {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    @keyframes blinkCursor {
+      50% { border-color: transparent; }
+    }
+
+    @media (max-width: 890px) {
+      .hero-split, .about-grid, .timeline-grid {
+        grid-template-columns: 1fr;
+      }
+      .tools-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="stars-canvas"></canvas>
+  <div class="ambient-glow"></div>
+
+  <div id="preloader-container">
+    <div class="loader-core">
+      <div class="loader-ring"></div>
+      <i class="fa-solid fa-bolt loader-icon"></i>
+    </div>
+    <h1 class="welcome-text">Welcome To My<br>Portofolio Website</h1>
+    <div class="loader-track">
+      <div class="loader-fill" id="fillBar"></div>
+    </div>
+    <div class="counter-text" id="percentText">INITIALIZING 0%</div>
+  </div>
+
+  <div class="page-wrapper">
+    
+    <header class="navbar-container slide-enter-down">
+      <nav class="capsule-nav">
+        <a href="#hero" class="nav-link active">Home</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#journey" class="nav-link">Journey</a>
+        <a href="#tools" class="nav-link">15 Tools</a>
+      </nav>
+    </header>
+
+    <section class="hero-split" id="hero">
+      <div class="slide-enter-left">
+        <div class="hero-badge"><i class="fa-solid fa-sparkles"></i> Creative Portfolio</div>
+        <h1 class="hero-title">Turning Ideas<br>Into Reality</h1>
+        <div class="hero-typewriter">
+          I'm a <span class="typed-word" id="typedElement"></span>
+        </div>
+        <p class="hero-desc">
+          Pensiunan editor jedag-jedug yang beralih mendalami baris kode, arsitektur web interaktif, After Effects styling, dan pengembangan tools mandiri.
+        </p>
+        <div class="hero-actions">
+          <a href="#tools" class="btn-glow-primary">Buka 15 Tools <i class="fa-solid fa-screwdriver-wrench"></i></a>
+          <button class="btn-glow-outline" onclick="copyDiscord()"><i class="fa-brands fa-discord"></i> Discord</button>
+        </div>
+      </div>
+
+      <div class="spotify-luxury-card slide-enter-right">
+        <div class="spotify-head">
+          <h4><i class="fa-brands fa-spotify" style="color:#1ed760;"></i> Daily Rotation</h4>
+          <p>Curated tracks that keep me focused while coding & editing</p>
+        </div>
+        <div class="track-active">
+          <div class="track-cover"><i class="fa-solid fa-music"></i></div>
+          <div class="track-info">
+            <div class="track-title">Cybernetic Flow</div>
+            <div class="track-artist">PyniWangyy Mix • Synthwave</div>
+          </div>
+          <i class="fa-solid fa-circle-play" style="color:#c084fc; font-size:1.7rem;"></i>
+        </div>
+        <div class="track-list">
+          <div class="track-item"><span>1. Kinetic Velocity Beats</span><span>03:41</span></div>
+          <div class="track-item"><span>2. Midnight Code Session</span><span>04:15</span></div>
+          <div class="track-item"><span>3. Visual Symphony Loop</span><span>02:50</span></div>
+        </div>
+      </div>
+    </section>
+
+    <main class="main-wrapper">
+      
+      <div class="section-header" id="about" data-aos="fade-down" data-aos-duration="800">
+        <span class="section-tag">Profile Overview</span>
+        <h2 class="section-title">About Me</h2>
+      </div>
+
+      <div class="about-grid">
+        <div class="luxury-card profile-card" data-aos="fade-right" data-aos-duration="800">
+          <div class="avatar-wrapper">
+            <img src="https://cdn.phototourl.com/free/2026-09-03-91429740-315e-4986-9db0-a2afaed4e1e5.jpg" alt="Avatar" class="avatar-img" />
+          </div>
+          <h3 class="profile-name">PyniWangyy</h3>
+          <div class="role-badges">
+            <span class="role-badge">Video Editor</span>
+            <span class="role-badge">Digital Creator</span>
+            <span class="role-badge">Programmer</span>
+          </div>
+        </div>
+
+        <div class="luxury-card bio-card" data-aos="fade-left" data-aos-duration="800">
+          <div>
+            <p class="bio-desc">
+              Pensiunan editor jedag-jedug (JJ) yang sekarang lagi asik eksplor dunia pemrograman dan fokus ke edit style After Effects. Akan comeback jika dia udah nggak males—atau kalau ada project yang beneran bikin tertantang lagi.
+            </p>
+            <div class="stats-row">
+              <div class="stat-box">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Video Edits</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-number">3+</div>
+                <div class="stat-label">Years Exp</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-number">15</div>
+                <div class="stat-label">Web Tools</div>
+              </div>
+            </div>
+          </div>
+          <div class="social-links">
+            <a href="https://www.tiktok.com/@pyniwangyy?_r=1&_t=ZS-99R8CBkBvvx" target="_blank" class="social-btn"><i class="fa-brands fa-tiktok"></i> TikTok</a>
+            <a href="https://www.youtube.com/@sdn_5mb" target="_blank" class="social-btn"><i class="fa-brands fa-youtube"></i> YouTube</a>
+            <a href="https://github.com/sdn145" target="_blank" class="social-btn"><i class="fa-brands fa-github"></i> GitHub</a>
+            <button class="social-btn" onclick="copyDiscord()"><i class="fa-brands fa-discord"></i> Discord</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-grid" id="journey">
+        <div class="luxury-card" data-aos="fade-up" data-aos-duration="800">
+          <h3 class="timeline-col-title"><i class="fa-solid fa-graduation-cap" style="color: #a855f7;"></i> Education</h3>
+          <div class="timeline-item">
+            <div class="timeline-date">2021 — 2024</div>
+            <div class="timeline-role">Self-Taught & Creative Journey</div>
+            <p class="timeline-desc">Mendalami ritme visual presisi, transisi dinamis, serta styling After Effects.</p>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2024 — SEKARANG</div>
+            <div class="timeline-role">Tech & Programming Exploration</div>
+            <p class="timeline-desc">Fokus logika kode, ekosistem web modern, serta pembuatan interactive UI tools.</p>
+          </div>
+        </div>
+
+        <div class="luxury-card" data-aos="fade-up" data-aos-duration="800" data-aos-delay="150">
+          <h3 class="timeline-col-title"><i class="fa-solid fa-briefcase" style="color: #a855f7;"></i> Experience</h3>
+          <div class="timeline-item">
+            <div class="timeline-date">2022 — 2024</div>
+            <div class="timeline-role">Freelance Video Editor</div>
+            <p class="timeline-desc">Mantan editor jedag-jedug (JJ) dengan fokus flow ritmis dan efek motion dinamis.</p>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2024 — SEKARANG</div>
+            <div class="timeline-role">Solo Creative Programmer</div>
+            <p class="timeline-desc">Mengembangkan antarmuka responsif dan tool utilitas digital yang langsung siap pakai.</p>
+          </div>
+        </div>
+      </div>
+
+      <section class="tools-section" id="tools">
+        <div class="section-header" data-aos="fade-down" data-aos-duration="800">
+          <span class="section-tag">Interactive Suite</span>
+          <h2 class="section-title">15 Live Creative Tools</h2>
+        </div>
+
+        <div class="tools-grid">
+
+          <div class="tool-box" data-aos="fade-up">
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon"><i class="fa-solid fa-drum"></i></div>
+                <div>
+                  <h4 class="tool-title">BPM & Beat Finder</h4>
+                  <p class="tool-desc">Tap ritme lagu untuk hitung BPM</p>
+                </div>
+              </div>
+              <div class="tool-body">
+                <button class="tool-btn" id="bpmTapBtn" style="padding: 16px;"><i class="fa-solid fa-hand-pointer"></i> TAP BEAT DI SINI</button>
+                <div class="tool-result">
+                  <span id="bpmVal">0 BPM</span>
+                  <button class="tool-btn" onclick="resetBPM()" style="padding: 4px 8px; font-size:0.75rem;">Reset</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-box" data-aos="fade-up">
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon"><i class="fa-solid fa-film"></i></div>
+                <div>
+                  <h4 class="tool-title">Frame to Timecode</h4>
+                  <p class="tool-desc">Konversi detik ke jumlah frames</p>
+                </div>
+              </div>
+              <div class="tool-body">
+                <input type="number" id="secInput" class="tool-input" placeholder="Durasi dalam Detik (cth: 2.5)" value="2">
+                <select id="fpsSelect" class="tool-select">
+                  <option value="24">24 FPS (Cinematic)</option>
+                  <option value="30">30 FPS (Standard)</option>
+                  <option value="60" selected>60 FPS (Smooth / Alight Motion)</option>
+                  <option value="120">120 FPS (Ultra Slowmo)</option>
+                </select>
+                <div class="tool-result"><span id="frameResult">120 Frames</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-box" data-aos="fade-up">
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon"><i class="fa-solid fa-vector-square"></i></div>
+                <div>
+                  <h4 class="tool-title">Aspect Ratio Scaler</h4>
+                  <p class="tool-desc">Hitung tinggi video dari lebar</p>
+                </div>
+              </div>
+              <div class="tool-body">
+                <input type="number" id="arWidth" class="tool-input" placeholder="Lebar Pixel" value="1080">
+                <select id="arRatio" class="tool-select">
+                  <option value="0.5625">9:16 (TikTok / Reels / Shorts)</option>
+                  <option value="1.7777">16:9 (YouTube Desktop)</option>
+                  <option value="1">1:1 (Square)</option>
+                  <option value="1.25">4:5 (Instagram Portrait)</option>
+                </select>
+                <div class="tool-result"><span id="arResult">1080 x 1920 px</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-box" data-aos="fade-up">
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon"><i class="fa-solid fa-gauge-high"></i></div>
+                <div>
+                  <h4 class="tool-title">Velocity Clip Matcher</h4>
+                  <p class="tool-desc">Hitung durasi klip hasil speed ramp</p>
+                </div>
+              </div>
+              <div class="tool-body">
+                <input type="number" id="clipDur" class="tool-input" placeholder="Durasi Asli (detik)" value="5">
+                <input type="number" id="clipSpeed" class="tool-input" placeholder="Kecepatan / Speed (cth: 2.5x)" value="2">
+                <div class="tool-result"><span id="velocityResult">Durasi Akhir: 2.50s</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-box" data-aos="fade-up">
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon"><i class="fa-solid fa-code"></i></div>
+                <div>
+                  <h4 class="tool-title">Morse Code Translator</h4>
+                  <p class="tool-desc">Ubah teks ke sandi Morse</p>
+                </div>
+              </div>
+              <div class="tool-body">
+                <input type="text" id="morseInput" class="tool-input" placeholder="Ketik teks di sini..." value="PYNI">
+                <div class="tool-result">
+                  <span id="morseResult">.--. -.-- -. ..</span>
+                  <button class="btn-copy-mini" onclick="copyVal('morseResult')"><i class="fa-regular fa-copy"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-box" data-aos="fade-up">
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon"><i class="fa-solid fa-palette"></i></div>
+                <div>
+                  <h4 class="tool-title">Color Format Converter</h4>
+                  <p class="tool-desc">Ubah HEX ke RGB dan HSL</p>
+                </div>
+              </div>
+              <div class="tool-body">
+                <div style="display:flex; gap:10px;">
+                  <input type="color" id="colorPicker" value="#a855f7" style="height:42px; width:50px; border-radius:10px; border:none; background:transparent; cursor:pointer;">
+                  <input type="text" id="hexInput" class="tool-input" value="#a855f7">
+                </div>
+                <div class="tool-result">
+                  <span id="rgbResult">rgb(168, 85, 247)</span>
+                  <button class="btn-copy-mini" onclick="copyVal('rgbResult')"><i class="fa-regular fa-copy"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-box" data-aos="fade-up">
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon"><i class="fa-solid fa-sun"></i></div>
+                <div>
+                  <h4 class="tool-title">Neon Glow Generator</h4>
+                  <p class="tool-desc">Buat kode CSS shadow neon instan</p>
+                </div>
+              </div>
+              <div class="tool-body">
+                <input type="range" id="glowBlur" min="5" max="60" value="25" class="tool-input">
+                <div class="tool-result">
+                  <span id="glowCssResult">box-shadow: 0 0 25px #a855f7;</span>
+                  <button class="btn-copy-mini" onclick="copyVal('glowCssResult')"><i class="fa-regular fa-copy"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-box" data-aos="fade-up">
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <div>
+                  <h4 class="tool-title">Secret Token Generator</h4>
+                  <p class="tool-desc">Buat password acak keamanan tinggi</p>
+                </div>
+              </div>
+              <div class="tool-body">
+                <button class="tool-btn" onclick="generateToken()"><i class="fa-solid fa-rotate"></i> Generate Token</button>
+                <div class="tool-result">
+                  <span id="tokenResult">zX9#kL2@vP8$qR1!</span>
+                  <button class="btn-copy-mini" onclick="copyVal('tokenResult')"><i class="fa-regular fa-copy"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-box" data-aos="fade-up">
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon"><i class="fa-solid fa-key"></i></div>
+                <div>
+                  <h4 class="tool-title">Base64 Encode / Decode</h4>
+                  <p class="tool-desc">Enkripsi teks ke Base64</p>
+                </div>
+              </div>
+              <div class="tool-body">
+                <input type="text" id="base64Input" class="tool-input" placeholder="Masukkan teks..." value="pyniwangyy">
+                <div style="display:flex; gap:8px;">
+                  <button class="tool-btn" style="flex:1;" onclick="encodeBase64()">Encode</button>
+                  <button class="tool-btn" style="flex:1;" onclick="decodeBase64()">Decode</button>
+                </div>
+                <div class="tool-result">
+                  <span id="base64Result">cHluaXdhbmd5eQ==</span>
+                  <button class="btn-copy-mini" onclick="copyVal('base64Result')"><i class="fa-regular fa-copy"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-box" data-aos="fade-up">
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon"><i class="fa-solid fa-link"></i></div>
+                <div>
+                  <h4 class="tool-title">Clean URL Slug Creator</h4>
+                  <p class="tool-desc">Ubah judul ke format URL repo/link</p>
+                </div>
+              </div>
+              <div class="tool-body">
+                <input type="text" id="slugInput" class="tool-input" placeholder="Ketik judul..." value="Tutorial Editing After Effects 2026">
+                <div class="tool-result">
+                  <span id="slugResult">tutorial-editing-after-effects-2026</span>
+                  <button class="btn-copy-mini" onclick="copyVal('slugResult')"><i class="fa-regular fa-copy"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-box" data-aos="fade-up">
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon"><i class="fa-solid fa-file-code"></i></div>
+                <div>
+                  <h4 class="tool-title">JSON Formatter</h4>
+                  <p class="tool-desc">Cek dan rapikan struktur JSON</p>
+                </div>
+              </div>
+              <div class="tool-body">
+                <textarea id="jsonInput" class="tool-textarea" placeholder='Ketik JSON cth: {"name":"pyni","role":"editor"}'></textarea>
+                <button class="tool-btn" onclick="formatJSON()"><i class="fa-solid fa-indent"></i> Format JSON</button>
+                <div class="tool-result"><span id="jsonResult">Hasil validasi siap...</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-box" data-aos="fade-up">
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon"><i class="fa-solid fa-font"></i></div>
+                <div>
+                  <h4 class="tool-title">Word & Char Counter</h4>
+                  <p class="tool-desc">Hitung huruf & kata untuk caption</p>
+                </div>
+              </div>
+              <div class="tool-body">
+                <textarea id="textCountInput" class="tool-textarea" placeholder="Tulis caption atau script di sini..."></textarea>
+                <div class="tool-result"><span id="wordCharResult">0 Kata | 0 Karakter</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-box" data-aos="fade-up">
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon"><i class="fa-solid fa-bezier-curve"></i></div>
+                <div>
+                  <h4 class="tool-title">Motion Easing Curve</h4>
+                  <p class="tool-desc">Preset kurva grafik motion AE / CSS</p>
+                </div>
+              </div>
+              <div class="tool-body">
+                <select id="easeSelect" class="tool-select">
+                  <option value="cubic-bezier(0.25, 0.1, 0.25, 1)">Ease (Default)</option>
+                  <option value="cubic-bezier(0.42, 0, 1, 1)">Ease In (Percepat)</option>
+                  <option value="cubic-bezier(0, 0, 0.58, 1)">Ease Out (Perlambat)</option>
+                  <option value="cubic-bezier(0.34, 1.56, 0.64, 1)" selected>Spring Pop (Membal Alight/AE)</option>
+                </select>
+                <div class="tool-result">
+                  <span id="easeResult">cubic-bezier(0.34, 1.56, 0.64, 1)</span>
+                  <button class="btn-copy-mini" onclick="copyVal('easeResult')"><i class="fa-regular fa-copy"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-box" data-aos="fade-up">
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon"><i class="fa-solid fa-stopwatch"></i></div>
+                <div>
+                  <h4 class="tool-title">Focus Pomodoro Timer</h4>
+                  <p class="tool-desc">Fokus editing & coding 25 Menit</p>
+                </div>
+              </div>
+              <div class="tool-body">
+                <div class="tool-result" style="justify-content:center; font-size:1.4rem; font-weight:800;">
+                  <span id="pomoTime">25:00</span>
+                </div>
+                <div style="display:flex; gap:8px;">
+                  <button class="tool-btn" style="flex:1;" onclick="startPomo()"><i class="fa-solid fa-play"></i> Start</button>
+                  <button class="tool-btn" style="flex:1;" onclick="resetPomo()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-box" data-aos="fade-up">
+            <div>
+              <div class="tool-header">
+                <div class="tool-icon"><i class="fa-solid fa-wave-square"></i></div>
+                <div>
+                  <h4 class="tool-title">Web Audio Pitch Beep</h4>
+                  <p class="tool-desc">Cek frekuensi audio sinyal browser</p>
+                </div>
+              </div>
+              <div class="tool-body">
+                <input type="range" id="freqRange" min="200" max="1200" value="440" class="tool-input">
+                <div class="tool-result"><span id="freqVal">440 Hz (Nada Standar A)</span></div>
+                <button class="tool-btn" onclick="playBeep()"><i class="fa-solid fa-volume-high"></i> Bunyikan Frekuensi</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <div id="toast"><i class="fa-solid fa-circle-check" style="color: #c084fc;"></i> <span id="toastMsg">Tersalin ke Clipboard!</span></div>
+
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    AOS.init({ once: false, mirror: true, offset: 40 });
+
+    /* 1. KANVAS BINTANG KOSMIK */
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    for (let i = 0; i < 90; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 1.5,
+        alpha: Math.random(),
+        speed: Math.random() * 0.4 + 0.1
+      });
+    }
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#ffffff";
+      stars.forEach(star => {
+        ctx.globalAlpha = star.alpha;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fill();
+        star.y -= star.speed;
+        if (star.y < 0) {
+          star.y = canvas.height;
+          star.x = Math.random() * canvas.width;
+        }
+      });
+      requestAnimationFrame(animateStars);
+    }
+    animateStars();
+
+    /* 2. PRELOADER */
+    const preloaderContainer = document.getElementById('preloader-container');
+    const fillBar = document.getElementById('fillBar');
+    const percentText = document.getElementById('percentText');
+
+    let count = 0;
+    const loadTimer = setInterval(() => {
+      count += Math.floor(Math.random() * 8) + 5;
+      if (count >= 100) {
+        count = 100;
+        clearInterval(loadTimer);
+        setTimeout(() => {
+          preloaderContainer.style.opacity = '0';
+          preloaderContainer.style.visibility = 'hidden';
+          document.body.classList.add('site-ready');
+          AOS.refresh();
+        }, 300);
+      }
+      fillBar.style.width = count + '%';
+      percentText.innerText = 'INITIALIZING ' + count + '%';
+    }, 35);
+
+    /* 3. TYPEWRITER */
+    const words = ["Video Editor.", "Creative Programmer.", "After Effects Stylist.", "Tool Developer."];
+    let wordIdx = 0, charIdx = 0, isDeleting = false;
+    const target = document.getElementById('typedElement');
+
+    function typeLoop() {
+      const currentWord = words[wordIdx];
+      target.textContent = isDeleting ? currentWord.substring(0, charIdx - 1) : currentWord.substring(0, charIdx + 1);
+      charIdx += isDeleting ? -1 : 1;
+
+      let typingSpeed = isDeleting ? 35 : 85;
+      if (!isDeleting && charIdx === currentWord.length) {
+        typingSpeed = 1600;
+        isDeleting = true;
+      } else if (isDeleting && charIdx === 0) {
+        isDeleting = false;
+        wordIdx = (wordIdx + 1) % words.length;
+        typingSpeed = 400;
+      }
+      setTimeout(typeLoop, typingSpeed);
+    }
+    document.addEventListener('DOMContentLoaded', typeLoop);
+
+    /* 4. TOAST NOTIF & CLIPBOARD HELPER */
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    function copyVal(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => showToast('Tersalin: ' + text));
+    }
+
+    function copyDiscord() {
+      navigator.clipboard.writeText('pyni6789').then(() => showToast('Discord Tag pyni6789 Tersalin!'));
+    }
+
+    /* ===================================================
+       LOGIKA LENGKAP 15 CREATIVE TOOLS
+       =================================================== */
+
+    // TOOL 1: BPM BEAT TAP
+    let tapTimes = [];
+    const bpmTapBtn = document.getElementById('bpmTapBtn');
+    bpmTapBtn.addEventListener('click', () => {
+      const now = performance.now();
+      tapTimes.push(now);
+      if (tapTimes.length > 1) {
+        if (now - tapTimes[tapTimes.length - 2] > 2000) {
+          tapTimes = [now];
+        } else {
+          let diffs = [];
+          for (let i = 1; i < tapTimes.length; i++) diffs.push(tapTimes[i] - tapTimes[i - 1]);
+          const avgDiff = diffs.reduce((a, b) => a + b, 0) / diffs.length;
+          const calculatedBPM = Math.round(60000 / avgDiff);
+          document.getElementById('bpmVal').innerText = calculatedBPM + ' BPM';
+        }
+      }
+    });
+    function resetBPM() {
+      tapTimes = [];
+      document.getElementById('bpmVal').innerText = '0 BPM';
+    }
+
+    // TOOL 2: FRAME TO TIMECODE
+    const secInput = document.getElementById('secInput');
+    const fpsSelect = document.getElementById('fpsSelect');
+    function updateFrames() {
+      const sec = parseFloat(secInput.value) || 0;
+      const fps = parseInt(fpsSelect.value);
+      document.getElementById('frameResult').innerText = Math.round(sec * fps) + ' Frames';
+    }
+    secInput.addEventListener('input', updateFrames);
+    fpsSelect.addEventListener('change', updateFrames);
+
+    // TOOL 3: ASPECT RATIO SCALER
+    const arWidth = document.getElementById('arWidth');
+    const arRatio = document.getElementById('arRatio');
+    function updateAspectRatio() {
+      const w = parseInt(arWidth.value) || 0;
+      const ratio = parseFloat(arRatio.value);
+      const h = Math.round(w * (ratio < 1 ? (1 / ratio) : (1 / ratio)));
+      const finalH = ratio === 0.5625 ? Math.round(w * (16 / 9)) : Math.round(w / ratio);
+      document.getElementById('arResult').innerText = w + ' x ' + finalH + ' px';
+    }
+    arWidth.addEventListener('input', updateAspectRatio);
+    arRatio.addEventListener('change', updateAspectRatio);
+
+    // TOOL 4: VELOCITY CLIP SPEED
+    const clipDur = document.getElementById('clipDur');
+    const clipSpeed = document.getElementById('clipSpeed');
+    function updateVelocity() {
+      const d = parseFloat(clipDur.value) || 0;
+      const s = parseFloat(clipSpeed.value) || 1;
+      const res = s > 0 ? (d / s).toFixed(2) : 0;
+      document.getElementById('velocityResult').innerText = 'Durasi Akhir: ' + res + 's';
+    }
+    clipDur.addEventListener('input', updateVelocity);
+    clipSpeed.addEventListener('input', updateVelocity);
+
+    // TOOL 5: MORSE CODE TRANSLATOR
+    const morseMap = {
+      'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
+      'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
+      'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
+      'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
+      'Y': '-.--', 'Z': '--..', '1': '.----', '2': '..---', '3': '...--',
+      '4': '....-', '5': '.....', '6': '-....', '7': '--...', '8': '---..',
+      '9': '----.', '0': '-----', ' ': '/'
+    };
+    document.getElementById('morseInput').addEventListener('input', (e) => {
+      const text = e.target.value.toUpperCase();
+      const morse = text.split('').map(c => morseMap[c] || '').join(' ');
+      document.getElementById('morseResult').innerText = morse || '...';
+    });
+
+    // TOOL 6: COLOR CONVERTER
+    const hexInput = document.getElementById('hexInput');
+    const colorPicker = document.getElementById('colorPicker');
+    function updateColor(hex) {
+      hex = hex.replace('#', '');
+      if (hex.length === 6) {
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        document.getElementById('rgbResult').innerText = `rgb(${r}, ${g}, ${b})`;
+      }
+    }
+    colorPicker.addEventListener('input', (e) => {
+      hexInput.value = e.target.value;
+      updateColor(e.target.value);
+    });
+    hexInput.addEventListener('input', (e) => {
+      colorPicker.value = e.target.value;
+      updateColor(e.target.value);
+    });
+
+    // TOOL 7: GLOW SHADOW GENERATOR
+    document.getElementById('glowBlur').addEventListener('input', (e) => {
+      const blur = e.target.value;
+      document.getElementById('glowCssResult').innerText = `box-shadow: 0 0 ${blur}px #a855f7;`;
+    });
+
+    // TOOL 8: TOKEN GENERATOR
+    function generateToken() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+      let res = '';
+      for (let i = 0; i < 16; i++) res += chars.charAt(Math.floor(Math.random() * chars.length));
+      document.getElementById('tokenResult').innerText = res;
+      showToast('Token Baru Digenerate!');
+    }
+
+    // TOOL 9: BASE64
+    function encodeBase64() {
+      const val = document.getElementById('base64Input').value;
+      document.getElementById('base64Result').innerText = btoa(val);
+    }
+    function decodeBase64() {
+      try {
+        const val = document.getElementById('base64Input').value;
+        document.getElementById('base64Result').innerText = atob(val);
+      } catch (err) {
+        document.getElementById('base64Result').innerText = 'Error Format Base64!';
+      }
+    }
+
+    // TOOL 10: SLUG GENERATOR
+    document.getElementById('slugInput').addEventListener('input', (e) => {
+      const slug = e.target.value.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+      document.getElementById('slugResult').innerText = slug || 'slug-url';
+    });
+
+    // TOOL 11: JSON FORMATTER
+    function formatJSON() {
+      const input = document.getElementById('jsonInput').value;
+      try {
+        const parsed = JSON.parse(input);
+        document.getElementById('jsonResult').innerText = 'JSON Valid: ' + JSON.stringify(parsed);
+        showToast('JSON Valid!');
+      } catch (e) {
+        document.getElementById('jsonResult').innerText = 'Format JSON Rusak / Salah!';
+      }
+    }
+
+    // TOOL 12: WORD & CHAR COUNTER
+    document.getElementById('textCountInput').addEventListener('input', (e) => {
+      const val = e.target.value;
+      const chars = val.length;
+      const words = val.trim() === '' ? 0 : val.trim().split(/\s+/).length;
+      document.getElementById('wordCharResult').innerText = `${words} Kata | ${chars} Karakter`;
+    });
+
+    // TOOL 13: MOTION EASING SELECTOR
+    document.getElementById('easeSelect').addEventListener('change', (e) => {
+      document.getElementById('easeResult').innerText = e.target.value;
+    });
+
+    // TOOL 14: POMODORO TIMER
+    let pomoSeconds = 1500;
+    let pomoInterval = null;
+    function startPomo() {
+      if (pomoInterval) return;
+      pomoInterval = setInterval(() => {
+        if (pomoSeconds > 0) {
+          pomoSeconds--;
+          const m = Math.floor(pomoSeconds / 60).toString().padStart(2, '0');
+          const s = (pomoSeconds % 60).toString().padStart(2, '0');
+          document.getElementById('pomoTime').innerText = `${m}:${s}`;
+        } else {
+          clearInterval(pomoInterval);
+          pomoInterval = null;
+          showToast('Waktu Pomodoro Selesai!');
+        }
+      }, 1000);
+    }
+    function resetPomo() {
+      clearInterval(pomoInterval);
+      pomoInterval = null;
+      pomoSeconds = 1500;
+      document.getElementById('pomoTime').innerText = '25:00';
+    }
+
+    // TOOL 15: AUDIO OSCILLATOR BEEP
+    let audioCtx = null;
+    const freqRange = document.getElementById('freqRange');
+    freqRange.addEventListener('input', (e) => {
+      document.getElementById('freqVal').innerText = e.target.value + ' Hz';
+    });
+    function playBeep() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = parseFloat(freqRange.value);
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.6);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.6);
+      showToast('Beep ' + freqRange.value + ' Hz Dimainkan!');
+    }
+  </script>
+</body>
+</html>
